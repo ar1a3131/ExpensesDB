@@ -14,7 +14,7 @@ Removing the container with sudo docker rm postgres-1 will not delete this volum
 
 .......................
 Steps to Recover Data:
-Verify the Volume Data: You can inspect the contents of the volume on the host to confirm your data:
+Verify the Volume Data: You can inspect the contents of the volume on the host to confirm your data (its not human readable, actually):
 sudo ls /volume1/@docker/volumes/bb902df982e435b174e1688fa2889b975cdc62658e2cf1db9900b8a972b0e7e0/_data/base
 
 
@@ -64,7 +64,8 @@ bb902df982e435b174e1688fa2889b975cdc62658e2cf1db9900b8a972b0e7e0 is the volume n
 .............................................................................................
 
 How PostgreSQL Gets the Data from a Directory
-Directory Assigned During Docker Container Creation When you run a docker run command with the -v option (or --mount), Docker mounts the specified host directory (or volume) into the container. For PostgreSQL, this is typically mounted to /var/lib/postgresql/data.
+Directory Assigned During Docker Container Creation
+When you run a docker run command with the -v option (or --mount), Docker mounts the specified host directory (or volume) into the container. For PostgreSQL, this is typically mounted to /var/lib/postgresql/data.
 
 Example:
 sudo docker run --name new-postgres-container \
@@ -83,6 +84,34 @@ sudo docker run --name postgres-container \
     -v /volume1/@docker/volumes/bb902df982e435b174e1688fa2889b975cdc62658e2cf1db9900b8a972b0e7e0/_data:/var/lib/postgresql/data \
     -p 5433:5432 \
     -d postgres:latest
+
+____________________________________________________________________________________________________
+
+Run pg_dump from the Host Machine: You can execute pg_dump to create a backup of your database.
+
+bash
+Copy code
+sudo docker exec -t postgres-container pg_dump -U postgres -F c -b -v -f /var/lib/postgresql/data/backup.dump expensesdb
+-F c: Custom format for compact backups.
+-b: Includes large objects.
+-v: Verbose output.
+-f: Specifies the backup file.
+_________________________________________________________________________
+to back up database using pg_dump:
+
+sudo docker stop postgres-container
+sudo docker rm postgres-container
+sudo docker run -d \
+    --name postgres-container \
+    --network expenses-network \
+    -e POSTGRES_PASSWORD=FergLib2024! \
+    -v /volume1/expensesdb_backup:/backups \
+    -v /volume1/@docker/volumes/bb902df982e435b174e1688fa2889b975cdc62658e2cf1db9900b8a972b0e7e0/_data:/var/lib/postgresql/data \
+    -p 5433:5432 \
+    postgres:latest
+
+
+
 
 
 

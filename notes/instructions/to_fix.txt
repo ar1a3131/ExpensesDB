@@ -6,4 +6,12 @@ tcp        0      0 127.0.0.1:5432          0.0.0.0:*               LISTEN
 
 ^need to get rid of that listening port^
 
-2. have reliable data backup besides the PostgreSQL volume in the NAS (explained in data_recovery.txt) 
+2. have reliable data backup besides the PostgreSQL volume in the NAS (explained in data_recovery.txt and backup.txt)
+
+3. allow option in submit request to add request to inventory:
+	1. add request to inventory checkbox
+	2. (if checked) new item type? -> if no then give a dropdown of all existing items -> select an item -> add a specific amount to the existing inventory or take away amount
+	3. if yes for new item type, allow the user to type in the new item type and have it be added to the dropdown for the future
+
+4. add to inventory page, make it easy to update
+

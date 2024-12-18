@@ -7,20 +7,28 @@ Fiction6-Wincing-Germproof
 
 Source code for the full stack code is in Helpdesk@F1-NAS2
 /volume1/ExpensesDB
-... I edited files using vim, if needed
+... I edited files using vim
 
 
 
-
+____________________________________________________________
 ****************************************
 Access the PostgreSQL container from cmd: 
-sudo docker exec -it postgres-1 /bin/bash
+sudo docker exec -it postgres-container /bin/bash
 
 password: 
 Fiction6-Wincing-Germproof
 
 To enter database from PostgreSQL container: 
 psql -U postgres -d expensesdb
+
+I used this once, just documenting it (if the above doesn't work, try this one):
+root@58e26579e65f:/app# psql -h postgres-container -p 5433 -U postgres -d expensesdb
+
+password should be:
+FergLib2024!
+**********************************************
+
 
 To list the relations/tables:
 \d
@@ -33,28 +41,31 @@ TABLE NAME EXPENSES DATA IS ALL IN THE "transactions" TABLE:
 SELECT * FROM transactions;
 
 press crtl+d to exit from psql bash
-*****************************************************
+____________________________________________________________
+*
+*
+*
+*
+*
+running the backend in NAS2/volume1/ExpensesDB/backend (this step is
+included in the update-backend.sh script, all we need to do is ./update-backend.sh): node server.js
 
 
+ip address of PostgreSQL container: 172.17.0.2 -> only 10.100.10.58 worked though
 
-
-
-
-
-
-running the backend in NAS2/volume1/ExpensesDB/backend: node server.js
-
-
-ip address of PostgreSQL container: 172.17.0.2 -> only 10.100.10.58 worked
-
-to view data in json form: 
+to view data in json form (enter this in browser): 
 http://10.100.10.58:5002/api/rows
 
-make sure to run backend with node server.js
+
+*
+*
+*
+*
+
 
 start and stop frontend:
-sudo docker stop react-frontend
-sudo docker start react-frontend
+sudo docker stop [name of frontend/react container]
+sudo docker start [name of frontend/react container]
 
 
 To see all containers on the nas that are active:
@@ -63,14 +74,26 @@ sudo docker ps
 
 
 ------------------
-network for all the containers?:
-sudo docker network create my-network
+network for all the containers?
 
------------------
+create new network:
+sudo docker network create expenses-network
+
+view all networks:
+sudo docker network ls
+
+inspect a network:
+sudo docker network inspect expenses-network
+
+-------------------
 
 
 
 -----------------------------------------
+***********
+- mentioned below is in the update-react.sh script, type cat update-react.sh to view contents of the file
+- run the script with ./update-react.sh
+***********
 building backend docker image (make sure you have the Dockerfile):
 sudo docker build -t backend-app .
 
@@ -85,6 +108,45 @@ sudo docker run --name backend-container \
 ------------------------------------------
 
 
+______________________________
+FIXING ERROR PAGES:
+
+-
+sudo docker exec -it react-frontend sh
+-
+vi /etc/nginx/conf.d/default.conf
+---------------------------------------
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    root   /usr/share/nginx/html;
+    index  index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+
+    # Serve 404 errors with index.html for React routing
+    error_page 404 /index.html;
+
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # Optional: Add caching for static files
+    location ~* \.(?:ico|css|js|gif|jpe?g|png|woff2?|eot|ttf|svg)$ {
+        expires 6M;
+        access_log off;
+        add_header Cache-Control "public";
+    }
+}
+---------------------------------
+-
+sudo docker exec -it react-frontend nginx -s reload
+
+_________________________________________________________
 
 
 
@@ -92,8 +154,30 @@ sudo docker run --name backend-container \
 
 
 
-***************************
-REFRESHING REACT CODE (only method I've found to work, but takes a few minutes):
+
+to help with debugging:
+sudo docker logs backend-container
+
+
+
+
+***************************don't do these steps, im just keeping it in so i remember this command***
+NEW METHOD FOR DEVELOPING IN DOCKER:
+
+-
+npm run build
+
+-
+sudo docker run -d \
+    -p 3000:80 \
+    --name react-frontend \
+    -v /volume1/ExpensesDB/build:/usr/share/nginx/html \
+    my-react-app
+********************************************************************************************
+
+
+
+OLD WAY OF REFRESHING REACT CODE (only method I've found to work, but takes a few minutes... THIS IS ALL IN 'update-react.sh' NOW, so use that bash script [./update-react.sh]):
 -
 npm run build
 

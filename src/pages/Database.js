@@ -120,22 +120,22 @@ const Database = () => {
                         <th>Description</th>
 						<th>Recurring?</th>
                     </tr>
-                </thead>
+                    </thead>
                 <tbody>
                     {rows.map(row => (
                         <tr key={row.id}>
                             <td>{row.id}</td>
-                            <td>{row.date}</td>
+                            <td>{new Date(row.date).toLocaleDateString('en-US')}</td>
                             <td>{row.amount}</td>
                             <td>{row.department}</td>
 							<td>{row.name}</td>
                             <td>{row.description}</td>
-							<td>{row.is_recurring_expenses}</td>
+							<td>{row.is_recurring_expense ? 'Yes' : 'No'}</td>
                         </tr>
                     ))}
                 </tbody>
             </table>
-            <div>Total Expenses: ${totalExpenses}</div>
+            <div className="total-expenses">Total Expenses: ${totalExpenses}</div>
         </div>
     );
 };

@@ -1,15 +1,15 @@
 /* Database.css */
 table {
-    width: 100%;
+    width: 75%;
     border-collapse: collapse;
-    margin: 20px 0;
-    font-size: 16px;
+    margin: 20px auto; /* Center the table */
+    font-size: 14px;
     text-align: left;
 }
 
 th, td {
     padding: 12px 15px;
-    border: 1px solid #ddd; /* Thin line between rows and columns */
+    border: 1px solid #ddd;
 }
 
 th {
@@ -18,12 +18,13 @@ th {
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9; /* Alternate row colors */
+    background-color: #f9f9f9;
 }
 
 tr:hover {
-    background-color: #f1f1f1; /* Highlight row on hover */
+    background-color: #f1f1f1;
 }
+
 
 /* Style for the form and dropdowns */
 .form-container {
@@ -99,11 +100,23 @@ button:hover {
 }
 
 .total-expenses {
-    margin-top: 20px;
-    font-size: 18px;
+    margin-top: 50px;
+    margin-bottom: 80px;
+    font-size: 28px;
     font-weight: bold;
+    background-color: #f4f4f4;
+    padding: 20px;
+    border: 2px solid #c7aa04;
+    text-align: center;
+    border-radius: 8px;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+.database-page {
+    margin-bottom: 120px;
+}
 
 h4 {
     text-align: center;

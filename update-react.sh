@@ -26,6 +26,7 @@ sudo docker run -d \
     -p 3000:80 \
     --name react-frontend \
     -v /volume1/ExpensesDB/build:/usr/share/nginx/html \
+    -v /volume1/ExpensesDB/nginx/default.conf:/etc/nginx/conf.d/default.conf \
     my-react-app
 
 echo "Update complete. Your changes should now be live at http://10.100.10.58:3000"

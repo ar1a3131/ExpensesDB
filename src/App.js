@@ -4,6 +4,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Request from './pages/Request';
 import Database from './pages/Database';
+import Inventory from './pages/Inventory';
+
 
 function App() {
   return (
@@ -26,6 +28,9 @@ function App() {
           <Link to="/database">
             <button>Database</button>
           </Link>
+          <Link to="/inventory">
+            <button>Inventory</button>
+          </Link>
         </nav>
 
         {/* Space between navigation and content */}
@@ -37,6 +42,7 @@ function App() {
           <Route path="/" element={<div><br />Use this to submit purchase requests and to search through the database.</div>} />
           <Route path="/submit-request" element={<Request />} />
           <Route path="/database" element={<Database />} />
+          <Route path="/inventory" element={<Inventory />} />
         </Routes>
       </div>
     </Router>
