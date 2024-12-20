@@ -64,7 +64,7 @@ const Database = () => {
     // Department options
     const departments = [
         "Adult Services", "AV", "Chester", "Circulation", "Communications",
-        "HBB", "IT Needs", "Passport", "South End", "Weed", "Youth"
+        "HBB", "IT Needs", "IT Staff", "IT Public", "Passport", "South End", "Weed", "Youth"
     ];
 
     // Month options

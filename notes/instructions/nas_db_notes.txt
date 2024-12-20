@@ -1,5 +1,5 @@
 To enter nas in cmd: 
-ssh helpdesk@10.100.10.58 -p 5064
+ssh helpdesk2@10.100.10.58 -p 5064
 
 password: 
 Fiction6-Wincing-Germproof
