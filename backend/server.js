@@ -37,7 +37,7 @@ pool.connect((err) => {
 
 // Routes
 app.get('/api/rows', async (req, res) => {
-    const { name, department, is_recurring_expense, month_since, year_since } = req.query;
+    const { name, department, is_recurring_expense, month_since, year_since , amount } = req.query;
 
     let query = 'SELECT * FROM transactions WHERE 1=1';
     const params = [];
@@ -59,6 +59,11 @@ app.get('/api/rows', async (req, res) => {
         params.push(is_recurring_expense === 'true' ? '1' : '0');
         paramCounter++;
     }
+    if (amount) {
+        query += ` AND amount = $${paramCounter}`;
+        params.push(amount);
+        paramCounter++;
+    }
     
     // Add month and year filtering
     if (month_since && year_since) {
@@ -74,6 +79,8 @@ app.get('/api/rows', async (req, res) => {
         paramCounter++;
     }
 
+    query += ' ORDER BY date DESC';
+
     try {
         const result = await pool.query(query, params);
         res.json(result.rows);
@@ -85,10 +92,13 @@ app.get('/api/rows', async (req, res) => {
 
 app.post('/api/add-transaction', async (req, res) => {
     const { date, amount, department, name, description, is_recurring_expense } = req.body;
+
     try {
+        // Normalize date to ensure consistency
+        const normalizedDate = new Date(date).toISOString().split('T')[0]; // Converts to YYYY-MM-DD format in UTC
         const result = await pool.query(
             'INSERT INTO transactions (date, amount, department, name, description, is_recurring_expense) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-            [date, amount, department, name, description, is_recurring_expense]
+            [normalizedDate, amount, department, name, description, is_recurring_expense]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -97,12 +107,13 @@ app.post('/api/add-transaction', async (req, res) => {
     }
 });
 
+
 // Delete transaction by ID
 app.delete('/api/delete-transaction/:id', async (req, res) => {
     const transactionId = req.params.id;
 
     try {
-        const result = await pool.query('DELETE FROM transactions WHERE transaction_id = $1 RETURNING *', [transactionId]);
+        const result = await pool.query('DELETE FROM transactions WHERE id = $1 RETURNING *', [transactionId]);
         if (result.rowCount === 0) {
             res.status(404).send(`Transaction ID ${transactionId} not found.`);
         } else {

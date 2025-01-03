@@ -23,7 +23,8 @@ To enter database from PostgreSQL container:
 psql -U postgres -d expensesdb
 
 I used this once, just documenting it (if the above doesn't work, try this one):
-root@58e26579e65f:/app# psql -h postgres-container -p 5433 -U postgres -d expensesdb
+root@58e26579e65f:/app# 
+psql -h postgres-container -p 5433 -U postgres -d expensesdb
 
 password should be:
 FergLib2024!

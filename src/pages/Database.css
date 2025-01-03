@@ -100,19 +100,33 @@ button:hover {
 }
 
 .total-expenses {
-    margin-top: 50px;
-    margin-bottom: 80px;
-    font-size: 28px;
-    font-weight: bold;
-    background-color: #f4f4f4;
-    padding: 20px;
-    border: 2px solid #c7aa04;
-    text-align: center;
-    border-radius: 8px;
-    width: 75%;
-    margin-left: auto;
-    margin-right: auto;
+    position: absolute; /* Position it at the top-left */
+    top: 160px; /* Adjust vertical positioning */
+    right: 30px; /* Adjust horizontal positioning */
+    display: flex; /* Flexbox for alignment */
+    
+    align-items: center; /* Align items vertically */
+    padding: 5px 10px; /* Add padding */
+    font-size: 1rem;
+    background-color: #f8f9fa; /* Optional background for better visibility */
+    border: 1px solid #ccc; /* Optional border */
+    border-radius: 5px; /* Rounded corners */
 }
+
+.total-expenses2 {
+    position: absolute; /* Position it at the top-left */
+    top: 200px; /* Adjust vertical positioning */
+    right: 30px; /* Adjust horizontal positioning */
+    display: flex; /* Flexbox for alignment */
+    
+    align-items: center; /* Align items vertically */
+    padding: 5px 10px; /* Add padding */
+    font-size: 1rem;
+    background-color: #f8f9fa; /* Optional background for better visibility */
+    border: 1px solid #ccc; /* Optional border */
+    border-radius: 5px; /* Rounded corners */
+}
+
 
 .database-page {
     margin-bottom: 120px;
@@ -121,3 +135,25 @@ button:hover {
 h4 {
     text-align: center;
 }
+
+.total-budget {
+    position: absolute; /* Position it at the top-left */
+    top: 100px; /* Adjust vertical positioning */
+    right: 10px; /* Adjust horizontal positioning */
+    display: flex; /* Flexbox for alignment */
+    align-items: center; /* Align items vertically */
+    padding: 5px 10px; /* Add padding */
+    font-size: 1rem;
+    background-color: #f8f9fa; /* Optional background for better visibility */
+    border: 1px solid #ccc; /* Optional border */
+    border-radius: 5px; /* Rounded corners */
+  
+  }
+
+  
+  .total-budget input {
+    margin-left: 10px; /* Space between label and input */
+    padding: 5px; /* Add padding to input */
+    font-size: 1rem; /* Match font size */
+  }
+  

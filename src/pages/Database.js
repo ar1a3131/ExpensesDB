@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Dropdown from './Dropdown';
@@ -11,10 +10,12 @@ const Database = () => {
     const [rows, setRows] = useState([]);
     const [name, setName] = useState('');
     const [department, setDepartment] = useState('');
+    const [amount, setAmount] = useState(0);
     const [isRecurring, setIsRecurring] = useState('0');
     const [monthSince, setMonthSince] = useState('');
     const [yearSince, setYearSince] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
+    const [totalBudget, setTotalBudget] = useState(0);
 
     // Fetch all data initially
     useEffect(() => {
@@ -35,9 +36,10 @@ const Database = () => {
         event.preventDefault();
         const params = {};
 
-        if (option === 'By name' && name) params.name = name;
-        if (option === 'By department' && department) params.department = department;
+        if (option === 'By Name' && name) params.name = name;
+        if (option === 'By Department' && department) params.department = department;
         if (option === 'Recurring') params.is_recurring_expense = isRecurring === '1' ? 'true' : 'false';
+        if (option === 'Specific Price Match' && amount) params.amount = amount;
         if (monthSince) params.month_since = monthSince;
         if (yearSince) params.year_since = yearSince;
 
@@ -78,26 +80,32 @@ const Database = () => {
     ];
 
     // Search criteria options
-    const searchOptions = ["By name", "By department", "Recurring"];
+    const searchOptions = ["By Name", "By Department", "Recurring", "Specific Price Match"];
 
     return (
         <div className="database-page">
             <h4>Search expenses database:</h4>
             <form className="form-container" onSubmit={handleSubmit}>
                 <Dropdown label="Select search criteria:" options={searchOptions} value={option} onChange={setOption} placeholder="Select" />
-                {option === 'By name' && (
+                {option === 'By Name' && (
                     <label>
                         Employee Name:
                         <input type="text" value={name} onChange={(e) => setName(e.target.value)} />
                     </label>
                 )}
-                {option === 'By department' && (
+                {option === 'By Department' && (
                     <Dropdown label="Select a Department" options={departments} value={department} onChange={setDepartment} placeholder="Choose a department" />
                 )}
                 {option === 'Recurring' && (
                     <label>
                         Recurring Expense:
                         <input type="checkbox" checked={isRecurring === '1'} onChange={handleCheckboxChange} />
+                    </label>
+                )}
+                {option === 'Specific Price Match' && (
+                    <label>
+                        Specific Price Match:
+                        <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
                     </label>
                 )}
                 <div className="flex-container">
@@ -108,6 +116,11 @@ const Database = () => {
                     </label>
                 </div>
                 <button type="submit">Search</button>
+                <label className="total-budget">
+                        Total Budget for the Year:
+                        <input type="number" min="0" value={totalBudget} onChange={(e) => setTotalBudget(e.target.value)} placeholder="Total Budget" />
+                </label>
+
             </form>
             <table>
                 <thead>
@@ -125,7 +138,7 @@ const Database = () => {
                     {rows.map(row => (
                         <tr key={row.id}>
                             <td>{row.id}</td>
-                            <td>{new Date(row.date).toLocaleDateString('en-US')}</td>
+                            <td>{new Date(row.date).toLocaleDateString('en-US', { timeZone: 'UTC' })}</td>
                             <td>{row.amount}</td>
                             <td>{row.department}</td>
 							<td>{row.name}</td>
@@ -135,7 +148,8 @@ const Database = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="total-expenses">Total Expenses: ${totalExpenses}</div>
+            <div className="total-expenses">Budget Left: ${totalBudget - totalExpenses}</div>
+            <div className="total-expenses2">Total Spending: ${totalExpenses}</div>
         </div>
     );
 };
