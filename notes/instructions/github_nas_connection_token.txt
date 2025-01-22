@@ -3,3 +3,6 @@ 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
 
 
 this is to be used in place of password for git commands
+
+new, generated 01/03/2025:
+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

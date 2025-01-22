@@ -39,7 +39,8 @@ function App() {
 
         {/* Routes to render different pages */}
         <Routes>
-          <Route path="/" element={<div><br />Use this to submit purchase requests and to search through the database.</div>} />
+          <Route path="/" element={<div><br />Use this to submit purchase requests and to search through the database.
+          The database should appear empty after the start of the new fiscal year. But all data is saved, in the backend for now.</div>} />
           <Route path="/submit-request" element={<Request />} />
           <Route path="/database" element={<Database />} />
           <Route path="/inventory" element={<Inventory />} />

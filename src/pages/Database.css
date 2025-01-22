@@ -156,4 +156,33 @@ h4 {
     padding: 5px; /* Add padding to input */
     font-size: 1rem; /* Match font size */
   }
+
+
+  
+  .fiscal-year-table {
+    width: 75%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: left;
+}
+
+.fiscal-year-table th, .fiscal-year-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.fiscal-year-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+.fiscal-year-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.fiscal-year-table tr:hover {
+    background-color: #f1f1f1;
+}
+
   

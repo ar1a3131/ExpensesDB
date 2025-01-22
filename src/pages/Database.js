@@ -16,6 +16,24 @@ const Database = () => {
     const [yearSince, setYearSince] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [totalBudget, setTotalBudget] = useState(0);
+    const [fiscalYearTotals, setFiscalYearTotals] = useState([]);
+
+    // Update fiscal year totals when the fiscal year changes
+    useEffect(() => {
+        const now = new Date();
+        const currentFiscalYear = `${now.getFullYear() - (now.getMonth() < 6 ? 1 : 0)}-${now.getFullYear()}`;
+        const lastFiscalYear = fiscalYearTotals[fiscalYearTotals.length - 1]?.fiscalYear;
+    
+        if (lastFiscalYear !== currentFiscalYear) {
+            setFiscalYearTotals((prevTotals) => [
+                ...prevTotals,
+                { fiscalYear: currentFiscalYear, total: totalExpenses },
+            ]);
+            setTotalExpenses(0); // Reset for the new fiscal year
+        }
+    }, [totalExpenses, fiscalYearTotals]);
+    
+
 
     // Fetch all data initially
     useEffect(() => {
@@ -54,9 +72,19 @@ const Database = () => {
 
     // Calculate total expenses
     const calculateTotal = (data) => {
-        const total = data.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
+        const currentYear = new Date().getFullYear();
+        const fiscalStart = new Date(currentYear - 1, 5, 1); // July 1st of the previous year
+        const fiscalEnd = new Date(currentYear, 4, 30, 23, 59, 59); // June 30th of the current year
+    
+        const filteredData = data.filter((row) => {
+            const rowDate = new Date(row.date); // Parse the row's date
+            return rowDate >= fiscalStart && rowDate <= fiscalEnd;
+        });
+    
+        const total = filteredData.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
         setTotalExpenses(total.toFixed(2)); // Format to 2 decimal places
     };
+    
 
     // Handle checkbox change for recurring expense
     const handleCheckboxChange = (event) => {
@@ -148,7 +176,27 @@ const Database = () => {
                     ))}
                 </tbody>
             </table>
-            <div className="total-expenses">Budget Left: ${totalBudget - totalExpenses}</div>
+            <table className="fiscal-year-table">
+                <thead>
+                    <tr>
+                        <th>Fiscal Year</th>
+                        <th>Total Expenses</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {fiscalYearTotals.map((entry, index) => (
+                        <tr key={index}>
+                            <td>{entry.fiscalYear}</td>
+                            <td>${entry.total.toFixed(2)}</td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+
+            <div className="total-expenses">
+                Budget Left: ${((totalBudget - totalExpenses) || 0).toFixed(2)}
+            </div>
+
             <div className="total-expenses2">Total Spending: ${totalExpenses}</div>
         </div>
     );
