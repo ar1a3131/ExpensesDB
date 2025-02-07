@@ -14,6 +14,8 @@ const Database = () => {
     const [isRecurring, setIsRecurring] = useState('0');
     const [monthSince, setMonthSince] = useState('');
     const [yearSince, setYearSince] = useState('');
+    const [dateSince, setDateSince] = useState('');
+    const [dateTo, setDateTo] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [totalBudget, setTotalBudget] = useState(0);
     const [fiscalYearTotals, setFiscalYearTotals] = useState([]);
@@ -58,8 +60,10 @@ const Database = () => {
         if (option === 'By Department' && department) params.department = department;
         if (option === 'Recurring') params.is_recurring_expense = isRecurring === '1' ? 'true' : 'false';
         if (option === 'Specific Price Match' && amount) params.amount = amount;
-        if (monthSince) params.month_since = monthSince;
-        if (yearSince) params.year_since = yearSince;
+        // if (monthSince) params.month_since = monthSince;
+        // if (yearSince) params.year_since = yearSince;
+        if (dateSince) params.date_since = dateSince;
+        if (dateTo) params.date_to = dateTo;
 
         try {
             const response = await axios.get(`${API_URL}/api/rows`, { params }); // Replace IP address if needed
@@ -137,10 +141,13 @@ const Database = () => {
                     </label>
                 )}
                 <div className="flex-container">
-                    <Dropdown label="Select start month:" options={months} value={monthSince} onChange={setMonthSince} placeholder="Month" />
                     <label>
-                        Year Since:
-                        <input type="number" min="1900" value={yearSince} onChange={(e) => setYearSince(e.target.value)} placeholder="Year" />
+                        From:
+                        <input type="text" value={dateSince} onChange={(e) => setDateSince(e.target.value)} placeholder="MM/DD/YYYY" />
+                    </label>
+                    <label>
+                        To:
+                        <input type="text" value={dateTo} onChange={(e) => setDateTo(e.target.value)} placeholder="MM/DD/YYYY" />
                     </label>
                 </div>
                 <button type="submit">Search</button>
@@ -203,4 +210,3 @@ const Database = () => {
 };
 
 export default Database;
-

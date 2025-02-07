@@ -37,7 +37,7 @@ pool.connect((err) => {
 
 // Routes
 app.get('/api/rows', async (req, res) => {
-    const { name, department, is_recurring_expense, month_since, year_since , amount } = req.query;
+    const { name, department, is_recurring_expense, date_since , date_to , amount } = req.query;
 
     let query = 'SELECT * FROM transactions WHERE 1=1';
     const params = [];
@@ -66,16 +66,13 @@ app.get('/api/rows', async (req, res) => {
     }
     
     // Add month and year filtering
-    if (month_since && year_since) {
-        query += ` AND (EXTRACT(YEAR FROM TO_DATE(date, 'MM/DD/YYYY')) > $${paramCounter} OR 
-                        (EXTRACT(YEAR FROM TO_DATE(date, 'MM/DD/YYYY')) = $${paramCounter} AND 
-                         EXTRACT(MONTH FROM TO_DATE(date, 'MM/DD/YYYY')) >= $${paramCounter + 1}))`;
-        params.push(year_since);
-        params.push(month_since);
-        paramCounter += 2;
-    } else if (year_since) {
-        query += ` AND EXTRACT(YEAR FROM TO_DATE(date, 'MM/DD/YYYY')) >= $${paramCounter}`;
-        params.push(year_since);
+    if (date_since) {
+        query += ` AND date >= $${paramCounter}`;
+        params.push(date_since);
+        paramCounter++;
+    } else if (date_since && date_to) {
+        query += ` AND  <= $${paramCounter}`;
+        params.push(date_to);
         paramCounter++;
     }
 
@@ -124,6 +121,77 @@ app.delete('/api/delete-transaction/:id', async (req, res) => {
         res.status(500).send('Error deleting transaction');
     }
 });
+
+// *************************INVENTORY TABLE************************************************
+// ****************************************************************************************
+
+app.post('/api/add-item', async (req, res) => {
+    const { date, name, quantity } = req.body;
+    
+    try {
+        const normalizedDate = new Date(date).toISOString().split('T')[0];
+        const result = await pool.query(
+            'INSERT INTO inventory (date, item, quantity) VALUES ($1, $2, $3) RETURNING *',
+            [normalizedDate, name, quantity]
+        );
+        res.status(201).json(result.rows[0]);
+    } catch (error) {
+        console.error('Error adding item:', error);
+        res.status(500).send('Error adding item');
+    }
+});
+
+// Get all inventory items
+app.get('/api/inventory', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM inventory ORDER BY date DESC');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Error fetching inventory:', error);
+        res.status(500).send('Error retrieving inventory');
+    }
+});
+
+// Delete inventory item
+app.delete('/api/delete-item/:id', async (req, res) => {
+    const itemId = req.params.id;
+    
+    try {
+        const result = await pool.query('DELETE FROM inventory WHERE id = $1 RETURNING *', [itemId]);
+        if (result.rowCount === 0) {
+            res.status(404).send(`Item ID ${itemId} not found.`);
+        } else {
+            res.status(200).json({ message: `Item ID ${itemId} deleted successfully.` });
+        }
+    } catch (error) {
+        console.error('Error deleting item:', error);
+        res.status(500).send('Error deleting item');
+    }
+});
+
+// Update inventory item quantity
+app.put('/api/update-item/:id', async (req, res) => {
+    const itemId = req.params.id;
+    const { quantity } = req.body;
+    
+    try {
+        const result = await pool.query(
+            'UPDATE inventory SET quantity = $1 WHERE id = $2 RETURNING *',
+            [quantity, itemId]
+        );
+        if (result.rowCount === 0) {
+            res.status(404).send(`Item ID ${itemId} not found.`);
+        } else {
+            res.json(result.rows[0]);
+        }
+    } catch (error) {
+        console.error('Error updating item:', error);
+        res.status(500).send('Error updating item');
+    }
+});
+
+// ****************************************************************************************
+// ****************************************************************************************
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {

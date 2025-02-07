@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Dropdown from './Dropdown';
+import InventoryOptions from './InventoryOptions';
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -9,12 +11,14 @@ const Request = () => {
     const [month, setMonth] = useState('');
     const [day, setDay] = useState('');
     const [year, setYear] = useState('');
+    const [date, setDate] = useState('');
     const [amount, setAmount] = useState('');
     const [name, setName] = useState('');
     const [department, setDepartment] = useState('');
     const [description, setDescription] = useState('');
     const [is_recurring_expense, setIsRecurring] = useState(0);
     const [transactionIdToDelete, setTransactionIdToDelete] = useState('');
+    const [addInventory, setAddInventory] = useState('');
     
     
     // Handle form submission
@@ -22,10 +26,14 @@ const Request = () => {
         event.preventDefault();
     
         // Construct the date in 'MM/DD/YYYY' format
-        const date = `${month}/${day}/${year}`;
+        // const date = `${month}/${day}/${year}`;
     
         // Validate the date
-        if (!month || !day || !year) {
+        // if (!month || !day || !year) {
+        //     alert("Please select a valid date.");
+        //     return;
+        // }
+        if (!date){
             alert("Please select a valid date.");
             return;
         }
@@ -77,6 +85,7 @@ const Request = () => {
         setMonth('');
         setDay('');
         setYear('');
+        setDate('');
         setAmount('');
         setName('');
         setDepartment('');
@@ -106,12 +115,43 @@ const Request = () => {
         label: String(i + 1)
     }));
 
+  
+    const [inventory, setInventory] = useState([
+        { name: 'Laptop', quantity: 0 },
+        { name: 'Mouse', quantity: 0 },
+    ]);
+    
+    const handleAddToInventory = (item) => {
+        setInventory((prev) => {
+            const existingItem = prev.find((i) => i.name === item.name);
+            if (existingItem) {
+                // Update quantity for existing item
+                return prev.map((i) =>
+                    i.name === item.name
+                        ? { ...i, quantity: i.quantity + item.quantity }
+                        : i
+                );
+            } else {
+                // Add new item
+                return [...prev, item];
+            }
+        });
+    };
+
     return (
         <div>
             <h4>Enter purchase request details:</h4>
             <form onSubmit={handleSubmit}>
                 <div className="date-inputs">
-                    <Dropdown
+                    <label>Date:</label>
+                        <input
+                            type="text"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            placeholder="MM/DD/YYYY"
+                            maxLength="10"
+                        />
+                    {/* <Dropdown
                         label="Month:"
                         options={months}
                         value={month}
@@ -134,7 +174,7 @@ const Request = () => {
                             placeholder="YYYY"
                             maxLength="4"
                         />
-                    </div>
+                    </div> */}
                 </div>
                 <br />
                 <label>
@@ -146,6 +186,7 @@ const Request = () => {
                     />
                 </label>
                 <br />
+                <br />
                 <Dropdown
                         label="Department:"
                         options={departments}
@@ -153,6 +194,7 @@ const Request = () => {
                         onChange={setDepartment}
                         placeholder="Choose a department"
                     />
+                <br />
                 <br />
                 <label>
                     Employee Name:
@@ -163,6 +205,7 @@ const Request = () => {
                     />
                 </label>
                 <br />
+                <br />
                 <label>
                     Description:
                     <input
@@ -172,6 +215,7 @@ const Request = () => {
                     />
                 </label>
                 <br />
+                <br />
                 <label>
                     Recurring Expense:
                     <input
@@ -180,6 +224,13 @@ const Request = () => {
                         onChange={(e) => setIsRecurring(e.target.checked ? 1 : 0)}
                     />
                 </label>
+                <br />
+                <br />
+                <InventoryOptions
+                    inventoryItems={inventory}
+                    onAddToInventory={handleAddToInventory}
+                />
+                <br />
                 <br />
                 <button type="submit">Submit</button>
             </form>

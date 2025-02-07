@@ -12,7 +12,7 @@ Source code for the full stack code is in Helpdesk@F1-NAS2
 
 
 ____________________________________________________________
-****************************************
+*********************************
 Access the PostgreSQL container from cmd: 
 sudo docker exec -it postgres-container /bin/bash
 
@@ -28,7 +28,7 @@ psql -h postgres-container -p 5433 -U postgres -d expensesdb
 
 password should be:
 FergLib2024!
-**********************************************
+************************************************
 
 
 To list the relations/tables:
