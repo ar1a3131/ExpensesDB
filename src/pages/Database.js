@@ -22,18 +22,37 @@ const Database = () => {
 
     // Update fiscal year totals when the fiscal year changes
     useEffect(() => {
-        const now = new Date();
-        const currentFiscalYear = `${now.getFullYear() - (now.getMonth() < 6 ? 1 : 0)}-${now.getFullYear()}`;
-        const lastFiscalYear = fiscalYearTotals[fiscalYearTotals.length - 1]?.fiscalYear;
+        const groupByFiscalYear = (transactions) => {
+            const fiscalYearTotals = {};
+            
+            transactions.forEach(transaction => {
+                const date = new Date(transaction.date);
+                const isNextFiscalYear = (date.getMonth() > 5) || 
+                                        (date.getMonth() === 5 && date.getDate() === 30);
+                const fiscalYear = isNextFiscalYear ? 
+                  `${date.getFullYear()}-${date.getFullYear()+1}` : 
+                  `${date.getFullYear()-1}-${date.getFullYear()}`;
+                
+                if (!fiscalYearTotals[fiscalYear]) {
+                    fiscalYearTotals[fiscalYear] = 0;
+                }
+                fiscalYearTotals[fiscalYear] += parseFloat(transaction.amount || 0);
+            });
+            
+            return Object.entries(fiscalYearTotals)
+                .map(([fiscalYear, total]) => ({
+                    fiscalYear,
+                    total
+                }))
+                .sort((a, b) => a.fiscalYear.localeCompare(b.fiscalYear));
+        };
     
-        if (lastFiscalYear !== currentFiscalYear) {
-            setFiscalYearTotals((prevTotals) => [
-                ...prevTotals,
-                { fiscalYear: currentFiscalYear, total: totalExpenses },
-            ]);
-            setTotalExpenses(0); // Reset for the new fiscal year
-        }
-    }, [totalExpenses, fiscalYearTotals]);
+        setFiscalYearTotals(groupByFiscalYear(rows));
+        const now = new Date();
+        const currentFiscalYear = `${now.getFullYear() - (now.getMonth() < 6 ? 1 : 0)}-${now.getFullYear() + (now.getMonth() < 6 ? 0 : 1)}`;
+        const currentTotal = groupByFiscalYear(rows).find(t => t.fiscalYear === currentFiscalYear)?.total || 0;
+        setTotalExpenses(currentTotal.toFixed(2));
+    }, [rows]);
     
 
 
@@ -62,11 +81,37 @@ const Database = () => {
         if (option === 'Specific Price Match' && amount) params.amount = amount;
         // if (monthSince) params.month_since = monthSince;
         // if (yearSince) params.year_since = yearSince;
-        if (dateSince) params.date_since = dateSince;
-        if (dateTo) params.date_to = dateTo;
+        // if (dateSince) params.date_since = dateSince;
+        // if (dateTo) params.date_to = dateTo;
+
+        // Convert dates to full ISO string with time set to end of day for To date
+        if (dateSince) {
+            const fromDate = new Date(dateSince);
+            if (!isNaN(fromDate.getTime())) {
+                fromDate.setHours(1, 0, 0, 0);  // Start of day
+                params.date_since = fromDate.toISOString();
+            }
+        }
+        
+        if (dateTo) {
+            const toDate = new Date(dateTo);
+            if (!isNaN(toDate.getTime())) {
+                toDate.setHours(23, 59, 59, 999);  // End of day
+                params.date_to = toDate.toISOString();
+            }
+        }
 
         try {
-            const response = await axios.get(`${API_URL}/api/rows`, { params }); // Replace IP address if needed
+            let response = await axios.get(`${API_URL}/api/rows`, { params });
+            // Additional client-side filtering to ensure end date is strictly enforced
+            if (dateTo) {
+                const endDate = new Date(dateTo);
+                endDate.setHours(23, 59, 59, 999);
+                response.data = response.data.filter(row => {
+                    const rowDate = new Date(row.date);
+                    return rowDate <= endDate;
+                });
+            }
             setRows(response.data);
             calculateTotal(response.data);
         } catch (error) {
@@ -143,11 +188,19 @@ const Database = () => {
                 <div className="flex-container">
                     <label>
                         From:
-                        <input type="text" value={dateSince} onChange={(e) => setDateSince(e.target.value)} placeholder="MM/DD/YYYY" />
+                        <input 
+                            type="date" 
+                            value={dateSince} 
+                            onChange={(e) => setDateSince(e.target.value)} 
+                        />
                     </label>
                     <label>
                         To:
-                        <input type="text" value={dateTo} onChange={(e) => setDateTo(e.target.value)} placeholder="MM/DD/YYYY" />
+                        <input 
+                            type="date" 
+                            value={dateTo} 
+                            onChange={(e) => setDateTo(e.target.value)} 
+                        />
                     </label>
                 </div>
                 <button type="submit">Search</button>

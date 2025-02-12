@@ -144,37 +144,11 @@ const Request = () => {
             <form onSubmit={handleSubmit}>
                 <div className="date-inputs">
                     <label>Date:</label>
-                        <input
-                            type="text"
-                            value={date}
-                            onChange={(e) => setDate(e.target.value)}
-                            placeholder="MM/DD/YYYY"
-                            maxLength="10"
-                        />
-                    {/* <Dropdown
-                        label="Month:"
-                        options={months}
-                        value={month}
-                        onChange={setMonth}
-                        placeholder="Month"
+                    <input
+                        type="date"
+                        value={date}
+                        onChange={(e) => setDate(e.target.value)}
                     />
-                    <Dropdown
-                        label="Day:"
-                        options={days}
-                        value={day}
-                        onChange={setDay}
-                        placeholder="Day"
-                    />
-                    <div className="year-input">
-                        <label>Year:</label>
-                        <input
-                            type="text"
-                            value={year}
-                            onChange={(e) => setYear(e.target.value)}
-                            placeholder="YYYY"
-                            maxLength="4"
-                        />
-                    </div> */}
                 </div>
                 <br />
                 <label>
