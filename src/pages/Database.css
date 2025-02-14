@@ -127,6 +127,37 @@ button:hover {
     border-radius: 5px; /* Rounded corners */
 }
 
+.total-budget-display {
+    position: absolute;
+    top: 240px;  /* Positions it below total spending which is at 200px */
+    right: 30px;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.update-budget-btn {
+    position: absolute; /* Position it relative to the viewport or its container */
+    top: 300px; /* Adjust this value to place it below the budget tab */
+    right: 30px; /* Align it with the top-right section */
+    z-index: 100; /* Ensure it appears above other elements */
+    padding: 10px 20px; /* Add padding for a larger button */
+    font-size: 16px; /* Adjust font size for better visibility */
+    background-color: #007bff; /* Button color */
+    color: white;
+    border: none;
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s ease;
+}
+
+.update-budget-btn:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
 
 .database-page {
     margin-bottom: 120px;

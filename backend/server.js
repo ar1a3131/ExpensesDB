@@ -143,8 +143,9 @@ app.post('/api/add-item', async (req, res) => {
 
 // Get all inventory items
 app.get('/api/inventory', async (req, res) => {
+
     try {
-        const result = await pool.query('SELECT * FROM inventory ORDER BY date DESC');
+        const result = await pool.query('SELECT * FROM inventory');
         res.json(result.rows);
     } catch (error) {
         console.error('Error fetching inventory:', error);

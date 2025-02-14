@@ -12,13 +12,36 @@ const Database = () => {
     const [department, setDepartment] = useState('');
     const [amount, setAmount] = useState(0);
     const [isRecurring, setIsRecurring] = useState('0');
-    const [monthSince, setMonthSince] = useState('');
-    const [yearSince, setYearSince] = useState('');
+    // const [monthSince, setMonthSince] = useState('');
+    // const [yearSince, setYearSince] = useState('');
     const [dateSince, setDateSince] = useState('');
     const [dateTo, setDateTo] = useState('');
     const [totalExpenses, setTotalExpenses] = useState(0);
     const [totalBudget, setTotalBudget] = useState(0);
     const [fiscalYearTotals, setFiscalYearTotals] = useState([]);
+    
+    const [displayedBudget, setDisplayedBudget] = useState(() => {
+        const savedBudget = localStorage.getItem('displayedBudget');
+        return savedBudget ? parseFloat(savedBudget) : 0;
+    });
+
+    // Add this new function to handle budget updates
+    const handleUpdateBudget = (e) => {
+        e.preventDefault(); // Prevent form submission
+        const newBudget = parseFloat(totalBudget) || 0;
+        setDisplayedBudget(newBudget);
+        // Save to localStorage whenever budget is updated
+        localStorage.setItem('displayedBudget', newBudget.toString());
+    };
+
+     // Also initialize totalBudget input with the stored value
+     useEffect(() => {
+        const savedBudget = localStorage.getItem('displayedBudget');
+        if (savedBudget) {
+            setTotalBudget(savedBudget);
+        }
+    }, []);
+
 
     // Update fiscal year totals when the fiscal year changes
     useEffect(() => {
@@ -55,6 +78,7 @@ const Database = () => {
     }, [rows]);
     
 
+    
 
     // Fetch all data initially
     useEffect(() => {
@@ -159,6 +183,9 @@ const Database = () => {
     // Search criteria options
     const searchOptions = ["By Name", "By Department", "Recurring", "Specific Price Match"];
 
+
+
+
     return (
         <div className="database-page">
             <h4>Search expenses database:</h4>
@@ -204,11 +231,36 @@ const Database = () => {
                     </label>
                 </div>
                 <button type="submit">Search</button>
-                <label className="total-budget">
+                <div className="flex items-center gap-4">
+                    <label className="total-budget">
                         Total Budget for the Year:
-                        <input type="number" min="0" value={totalBudget} onChange={(e) => setTotalBudget(e.target.value)} placeholder="Total Budget" />
-                </label>
-
+                        <input 
+                            type="number" 
+                            min="0" 
+                            value={totalBudget} 
+                            onChange={(e) => setTotalBudget(e.target.value)} 
+                            placeholder="Total Budget" 
+                        />
+                    </label>
+                    <button
+                        type="button-budget"
+                        onClick={handleUpdateBudget}
+                        className="update-budget-btn bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+                    >
+                        Update Budget
+                    </button>
+                </div>
+                <div className="budget-info">
+                <div className="total-expenses">
+                    Budget Left: ${((displayedBudget - totalExpenses) || 0).toFixed(2)}
+                </div>
+                <div className="total-expenses2">
+                    Total Spending: ${totalExpenses}
+                </div>
+                <div className="total-budget-display">
+                    Budget: ${displayedBudget.toFixed(2)}
+                </div>
+            </div>
             </form>
             <table>
                 <thead>
