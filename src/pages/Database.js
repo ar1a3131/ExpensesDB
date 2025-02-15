@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Dropdown from './Dropdown';
+import DownloadCSV from './DownloadCSV';
 import './Database.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -240,7 +241,7 @@ const Database = () => {
 
 <div className="flex-container">
     <div className="date-range-section">
-        Search by Date:
+        Search by Date (within the current fiscal year):
         <label>
             From:
             <input 
@@ -259,10 +260,11 @@ const Database = () => {
         </label>
     </div>
 
-    {/* Add a separator line */}
+   
     <div className="separator"></div>
 
     <div className="quarter-filter">
+        or search by quarter through the entire database
             <label>
                 Select Year:
                 <input 
@@ -317,7 +319,7 @@ const Database = () => {
 
 
                 <button type="submit">Search</button>
-
+                <DownloadCSV rows={rows} />
                 <div className="flex items-center gap-4">
                 <label className="total-budget">
                     Total Budget for the Year:

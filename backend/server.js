@@ -78,40 +78,58 @@ app.get('/api/rows', async (req, res) => {
         paramCounter++;
     }
 
-    // Quarter-based filtering
-    if (year && quarters) {
-        const quartersArray = JSON.parse(quarters); // Parse the quarters string into an array
-        const quarterClauses = [];
+    // Fiscal year filtering
+    if (year) {
+        // If a specific year is provided, filter by that year and quarters (if provided)
+        if (quarters) {
+            const quartersArray = JSON.parse(quarters); // Parse the quarters string into an array
+            const quarterClauses = [];
 
-        quartersArray.forEach(quarter => {
-            let startDate, endDate;
-            switch (quarter) {
-                case 'Q1':
-                    startDate = `${year}-01-01`;
-                    endDate = `${year}-03-31`;
-                    break;
-                case 'Q2':
-                    startDate = `${year}-04-01`;
-                    endDate = `${year}-06-30`;
-                    break;
-                case 'Q3':
-                    startDate = `${year}-07-01`;
-                    endDate = `${year}-09-30`;
-                    break;
-                case 'Q4':
-                    startDate = `${year}-10-01`;
-                    endDate = `${year}-12-31`;
-                    break;
+            quartersArray.forEach(quarter => {
+                let startDate, endDate;
+                switch (quarter) {
+                    case 'Q1':
+                        startDate = `${year}-01-01`;
+                        endDate = `${year}-03-31`;
+                        break;
+                    case 'Q2':
+                        startDate = `${year}-04-01`;
+                        endDate = `${year}-06-30`;
+                        break;
+                    case 'Q3':
+                        startDate = `${year}-07-01`;
+                        endDate = `${year}-09-30`;
+                        break;
+                    case 'Q4':
+                        startDate = `${year}-10-01`;
+                        endDate = `${year}-12-31`;
+                        break;
+                }
+
+                quarterClauses.push(`(date >= $${paramCounter} AND date <= $${paramCounter + 1})`);
+                params.push(startDate, endDate);
+                paramCounter += 2;
+            });
+
+            if (quarterClauses.length > 0) {
+                query += ` AND (${quarterClauses.join(' OR ')})`;
             }
-
-            quarterClauses.push(`(date >= $${paramCounter} AND date <= $${paramCounter + 1})`);
-            params.push(startDate, endDate);
+        } else {
+            // If no quarters are provided, filter by the entire year
+            query += ` AND date >= $${paramCounter} AND date <= $${paramCounter + 1}`;
+            params.push(`${year}-01-01`, `${year}-12-31`);
             paramCounter += 2;
-        });
-
-        if (quarterClauses.length > 0) {
-            query += ` AND (${quarterClauses.join(' OR ')})`;
         }
+    } else {
+        // If no year is provided, default to the current fiscal year
+        const now = new Date();
+        const currentYear = now.getFullYear();
+        const fiscalStart = new Date(currentYear - (now.getMonth() < 6 ? 1 : 0), 6, 1); // July 1st of the previous year
+        const fiscalEnd = new Date(currentYear + (now.getMonth() < 6 ? 0 : 1), 5, 30); // June 30th of the current year
+
+        query += ` AND date >= $${paramCounter} AND date <= $${paramCounter + 1}`;
+        params.push(fiscalStart.toISOString().split('T')[0], fiscalEnd.toISOString().split('T')[0]);
+        paramCounter += 2;
     }
 
     query += ' ORDER BY date DESC';
