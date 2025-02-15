@@ -35,9 +35,10 @@ pool.connect((err) => {
     }
 });
 
-// Routes
+
+
 app.get('/api/rows', async (req, res) => {
-    const { name, department, is_recurring_expense, date_since , date_to , amount } = req.query;
+    const { name, department, is_recurring_expense, date_since, date_to, amount, year, quarters } = req.query;
 
     let query = 'SELECT * FROM transactions WHERE 1=1';
     const params = [];
@@ -64,16 +65,53 @@ app.get('/api/rows', async (req, res) => {
         params.push(amount);
         paramCounter++;
     }
-    
-    // Add month and year filtering
+
+    // Date range filtering
     if (date_since) {
         query += ` AND date >= $${paramCounter}`;
         params.push(date_since);
         paramCounter++;
-    } else if (date_since && date_to) {
-        query += ` AND  <= $${paramCounter}`;
+    }
+    if (date_to) {
+        query += ` AND date <= $${paramCounter}`;
         params.push(date_to);
         paramCounter++;
+    }
+
+    // Quarter-based filtering
+    if (year && quarters) {
+        const quartersArray = JSON.parse(quarters); // Parse the quarters string into an array
+        const quarterClauses = [];
+
+        quartersArray.forEach(quarter => {
+            let startDate, endDate;
+            switch (quarter) {
+                case 'Q1':
+                    startDate = `${year}-01-01`;
+                    endDate = `${year}-03-31`;
+                    break;
+                case 'Q2':
+                    startDate = `${year}-04-01`;
+                    endDate = `${year}-06-30`;
+                    break;
+                case 'Q3':
+                    startDate = `${year}-07-01`;
+                    endDate = `${year}-09-30`;
+                    break;
+                case 'Q4':
+                    startDate = `${year}-10-01`;
+                    endDate = `${year}-12-31`;
+                    break;
+            }
+
+            quarterClauses.push(`(date >= $${paramCounter} AND date <= $${paramCounter + 1})`);
+            params.push(startDate, endDate);
+            paramCounter += 2;
+        });
+
+        if (quarterClauses.length > 0) {
+            query += ` AND (${quarterClauses.join(' OR ')})`;
+        }
     }
 
     query += ' ORDER BY date DESC';
@@ -86,6 +124,11 @@ app.get('/api/rows', async (req, res) => {
         res.status(500).send('Error retrieving data');
     }
 });
+
+
+
+
+
 
 app.post('/api/add-transaction', async (req, res) => {
     const { date, amount, department, name, description, is_recurring_expense } = req.body;

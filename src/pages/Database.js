@@ -24,6 +24,22 @@ const Database = () => {
         const savedBudget = localStorage.getItem('displayedBudget');
         return savedBudget ? parseFloat(savedBudget) : 0;
     });
+    const [selectedYear, setSelectedYear] = useState('');
+    const [selectedQuarters, setSelectedQuarters] = useState([]);
+    
+    
+    const handleQuarterChange = (quarter) => {
+        setSelectedQuarters(prev => {
+            if (prev.includes(quarter)) {
+                return prev.filter(q => q !== quarter);
+            } else {
+                return [...prev, quarter];
+            }
+        });
+    };
+
+
+
 
     // Add this new function to handle budget updates
     const handleUpdateBudget = (e) => {
@@ -125,6 +141,13 @@ const Database = () => {
             }
         }
 
+
+        // Quarter and year filters
+    if (selectedYear && selectedQuarters.length > 0) {
+        params.year = selectedYear;
+        params.quarters = JSON.stringify(selectedQuarters); // Send quarters as a JSON string
+    }
+
         try {
             let response = await axios.get(`${API_URL}/api/rows`, { params });
             // Additional client-side filtering to ensure end date is strictly enforced
@@ -212,55 +235,119 @@ const Database = () => {
                         <input type="number" value={amount} onChange={(e) => setAmount(e.target.value)} />
                     </label>
                 )}
-                <div className="flex-container">
-                    <label>
-                        From:
-                        <input 
-                            type="date" 
-                            value={dateSince} 
-                            onChange={(e) => setDateSince(e.target.value)} 
-                        />
-                    </label>
-                    <label>
-                        To:
-                        <input 
-                            type="date" 
-                            value={dateTo} 
-                            onChange={(e) => setDateTo(e.target.value)} 
-                        />
-                    </label>
-                </div>
+
+
+
+<div className="flex-container">
+    <div className="date-range-section">
+        Search by Date:
+        <label>
+            From:
+            <input 
+                type="date" 
+                value={dateSince} 
+                onChange={(e) => setDateSince(e.target.value)} 
+            />
+        </label>
+        <label>
+            To:
+            <input 
+                type="date" 
+                value={dateTo} 
+                onChange={(e) => setDateTo(e.target.value)} 
+            />
+        </label>
+    </div>
+
+    {/* Add a separator line */}
+    <div className="separator"></div>
+
+    <div className="quarter-filter">
+            <label>
+                Select Year:
+                <input 
+                    type="text" 
+                    value={selectedYear} 
+                    onChange={(e) => setSelectedYear(e.target.value)} 
+                    placeholder="Enter Year" 
+                    className="year-select"
+                />
+            </label>
+        
+        <div className="quarters-container">
+            <label className="quarter-checkbox">
+                <input 
+                    type="checkbox"
+                    checked={selectedQuarters.includes('Q1')}
+                    onChange={() => handleQuarterChange('Q1')}
+                />
+                Q1 (Jan-Mar)
+            </label>
+            
+            <label className="quarter-checkbox">
+                <input 
+                    type="checkbox"
+                    checked={selectedQuarters.includes('Q2')}
+                    onChange={() => handleQuarterChange('Q2')}
+                />
+                Q2 (Apr-Jun)
+            </label>
+            
+            <label className="quarter-checkbox">
+                <input 
+                    type="checkbox"
+                    checked={selectedQuarters.includes('Q3')}
+                    onChange={() => handleQuarterChange('Q3')}
+                />
+                Q3 (Jul-Sep)
+            </label>
+            
+            <label className="quarter-checkbox">
+                <input 
+                    type="checkbox"
+                    checked={selectedQuarters.includes('Q4')}
+                    onChange={() => handleQuarterChange('Q4')}
+                />
+                Q4 (Oct-Dec)
+            </label>
+        </div>
+    </div>
+</div>
+
+
+
                 <button type="submit">Search</button>
+
                 <div className="flex items-center gap-4">
-                    <label className="total-budget">
-                        Total Budget for the Year:
-                        <input 
-                            type="number" 
-                            min="0" 
-                            value={totalBudget} 
-                            onChange={(e) => setTotalBudget(e.target.value)} 
-                            placeholder="Total Budget" 
-                        />
-                    </label>
+                <label className="total-budget">
+                    Total Budget for the Year:
+                    <input 
+                        type="number" 
+                        min="0" 
+                        value={totalBudget} 
+                        onChange={(e) => setTotalBudget(e.target.value)} 
+                        placeholder="Total Budget" 
+                    />
                     <button
-                        type="button-budget"
+                        type="button"
                         onClick={handleUpdateBudget}
-                        className="update-budget-btn bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
+                        className="update-budget-btn"
                     >
                         Update Budget
                     </button>
+                </label>
                 </div>
                 <div className="budget-info">
-                <div className="total-expenses">
-                    Budget Left: ${((displayedBudget - totalExpenses) || 0).toFixed(2)}
+                    <div className="total-expenses">
+                        Budget Left: ${((displayedBudget - totalExpenses) || 0).toFixed(2)}
+                    </div>
+                    <div className="total-expenses2">
+                        Total Spending: ${totalExpenses}
+                    </div>
+                    <div className="total-budget-display">
+                        Budget: ${displayedBudget.toFixed(2)}
+                    </div>
                 </div>
-                <div className="total-expenses2">
-                    Total Spending: ${totalExpenses}
-                </div>
-                <div className="total-budget-display">
-                    Budget: ${displayedBudget.toFixed(2)}
-                </div>
-            </div>
             </form>
             <table>
                 <thead>
