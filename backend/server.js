@@ -183,6 +183,50 @@ app.delete('/api/delete-transaction/:id', async (req, res) => {
     }
 });
 
+// *************************FISCAL YEAR TOTALS TABLE************************************************
+// ****************************************************************************************
+
+// New endpoint to fetch fiscal year totals
+app.get('/api/fiscal-year-totals', async (req, res) => {
+    try {
+        // Fetch all transactions
+        const result = await pool.query('SELECT * FROM transactions');
+
+        // Group transactions by fiscal year and calculate totals
+        const fiscalYearTotals = {};
+        result.rows.forEach(transaction => {
+            const date = new Date(transaction.date);
+            const isNextFiscalYear = (date.getMonth() > 5) || (date.getMonth() === 5 && date.getDate() === 30);
+            const fiscalYear = isNextFiscalYear ? 
+                `${date.getFullYear()}-${date.getFullYear() + 1}` : 
+                `${date.getFullYear() - 1}-${date.getFullYear()}`;
+
+            if (!fiscalYearTotals[fiscalYear]) {
+                fiscalYearTotals[fiscalYear] = 0;
+            }
+            fiscalYearTotals[fiscalYear] += parseFloat(transaction.amount || 0);
+        });
+
+        // Convert to an array of objects and sort by fiscal year
+        const fiscalYearTotalsArray = Object.entries(fiscalYearTotals)
+            .map(([fiscalYear, total]) => ({
+                fiscalYear,
+                total
+            }))
+            .sort((a, b) => a.fiscalYear.localeCompare(b.fiscalYear));
+
+        res.json(fiscalYearTotalsArray);
+    } catch (error) {
+        console.error('Error fetching fiscal year totals:', error);
+        res.status(500).send('Error retrieving fiscal year totals');
+    }
+});
+
+// ****************************************************************************************
+// ****************************************************************************************
+
+
+
 // *************************INVENTORY TABLE************************************************
 // ****************************************************************************************
 

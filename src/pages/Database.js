@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Dropdown from './Dropdown';
 import DownloadCSV from './DownloadCSV';
+import FiscalYearTable from './FiscalYearTable';
 import './Database.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -27,6 +28,7 @@ const Database = () => {
     });
     const [selectedYear, setSelectedYear] = useState('');
     const [selectedQuarters, setSelectedQuarters] = useState([]);
+    
     
     
     const handleQuarterChange = (quarter) => {
@@ -209,6 +211,19 @@ const Database = () => {
 
 
 
+    useEffect(() => {
+        const fetchFiscalYearTotals = async () => {
+            try {
+                const response = await axios.get(`${API_URL}/api/fiscal-year-totals`);
+                setFiscalYearTotals(response.data);
+            } catch (error) {
+                console.error('Error fetching fiscal year totals:', error);
+            }
+        };
+        fetchFiscalYearTotals();
+    }, []);
+
+
 
     return (
         <div className="database-page">
@@ -241,7 +256,7 @@ const Database = () => {
 
 <div className="flex-container">
     <div className="date-range-section">
-        Search by Date (within the current fiscal year):
+        Search by Date (only within the current fiscal year):
         <label>
             From:
             <input 
@@ -377,22 +392,7 @@ const Database = () => {
                     ))}
                 </tbody>
             </table>
-            <table className="fiscal-year-table">
-                <thead>
-                    <tr>
-                        <th>Fiscal Year</th>
-                        <th>Total Expenses</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {fiscalYearTotals.map((entry, index) => (
-                        <tr key={index}>
-                            <td>{entry.fiscalYear}</td>
-                            <td>${entry.total.toFixed(2)}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <FiscalYearTable fiscalYearTotals={fiscalYearTotals} />
 
             <div className="total-expenses">
                 Budget Left: ${((totalBudget - totalExpenses) || 0).toFixed(2)}
