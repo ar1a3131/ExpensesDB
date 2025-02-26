@@ -227,6 +227,12 @@ const Database = () => {
 
     return (
         <div className="database-page">
+             <div className="info_box">
+            <p className="info">
+                The Download CSV button will give you a csv file of the data returned from the search criteria you entered.
+            </p>
+            </div>
+
             <h4>Search expenses database:</h4>
             <form className="form-container" onSubmit={handleSubmit}>
                 <Dropdown label="Select search criteria:" options={searchOptions} value={option} onChange={setOption} placeholder="Select" />
