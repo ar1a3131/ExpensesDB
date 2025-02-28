@@ -231,13 +231,13 @@ app.get('/api/fiscal-year-totals', async (req, res) => {
 // ****************************************************************************************
 
 app.post('/api/add-item', async (req, res) => {
-    const { date, name, quantity } = req.body;
+    const { date, item, quantity } = req.body;
     
     try {
         const normalizedDate = new Date(date).toISOString().split('T')[0];
         const result = await pool.query(
-            'INSERT INTO inventory (date, item, quantity) VALUES ($1, $2, $3) RETURNING *',
-            [normalizedDate, name, quantity]
+            'INSERT INTO inventory (item, quantity, last_update) VALUES ($1, $2, $3) RETURNING *',
+            [item, quantity, normalizedDate]
         );
         res.status(201).json(result.rows[0]);
     } catch (error) {
@@ -259,15 +259,15 @@ app.get('/api/inventory', async (req, res) => {
 });
 
 // Delete inventory item
-app.delete('/api/delete-item/:id', async (req, res) => {
-    const itemId = req.params.id;
-    
+app.delete('/api/delete-item/:item', async (req, res) => {
+    const itemId = req.params.item;
+
     try {
-        const result = await pool.query('DELETE FROM inventory WHERE id = $1 RETURNING *', [itemId]);
+        const result = await pool.query('DELETE FROM inventory WHERE item = $1 RETURNING *', [itemId]);
         if (result.rowCount === 0) {
-            res.status(404).send(`Item ID ${itemId} not found.`);
+            res.status(404).send(`Item, ${itemId}, not found.`);
         } else {
-            res.status(200).json({ message: `Item ID ${itemId} deleted successfully.` });
+            res.status(200).json({ message: `Item, ${itemId}, deleted successfully.` });
         }
     } catch (error) {
         console.error('Error deleting item:', error);
@@ -276,25 +276,27 @@ app.delete('/api/delete-item/:id', async (req, res) => {
 });
 
 // Update inventory item quantity
-app.put('/api/update-item/:id', async (req, res) => {
-    const itemId = req.params.id;
+app.put('/api/update-quantity/:item', async (req, res) => {
+    const itemId = req.params.item;
     const { quantity } = req.body;
+    const today = new Date().toISOString().split('T')[0];
     
     try {
         const result = await pool.query(
-            'UPDATE inventory SET quantity = $1 WHERE id = $2 RETURNING *',
-            [quantity, itemId]
+            'UPDATE inventory SET quantity = $1, last_update = $2 WHERE item = $3 RETURNING *',
+            [quantity, today, itemId]
         );
         if (result.rowCount === 0) {
-            res.status(404).send(`Item ID ${itemId} not found.`);
+            res.status(404).send(`Item, ${itemId}, not found.`);
         } else {
             res.json(result.rows[0]);
         }
     } catch (error) {
-        console.error('Error updating item:', error);
-        res.status(500).send('Error updating item');
+        console.error('Error updating quantity:', error);
+        // Error handling code
     }
 });
+
 
 // ****************************************************************************************
 // ****************************************************************************************

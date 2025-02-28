@@ -341,36 +341,40 @@ const Database = () => {
 
                 <button type="submit">Search</button>
                 <DownloadCSV rows={rows} />
-                <div className="flex items-center gap-4">
-                <label className="total-budget">
-                    Total Budget for the Year:
-                    <input 
-                        type="number" 
-                        min="0" 
-                        value={totalBudget} 
-                        onChange={(e) => setTotalBudget(e.target.value)} 
-                        placeholder="Total Budget" 
-                    />
-                    <button
-                        type="button"
-                        onClick={handleUpdateBudget}
-                        className="update-budget-btn"
-                    >
-                        Update Budget
-                    </button>
-                </label>
+
+                <div className="budget-box">
+                    <div className="flex items-center gap-4">
+                        <label className="total-budget">
+                            Total Budget for the Year:
+                            <input 
+                                type="number" 
+                                min="0" 
+                                value={totalBudget} 
+                                onChange={(e) => setTotalBudget(e.target.value)} 
+                                placeholder="Total Budget" 
+                            />
+                            <button
+                                type="button"
+                                onClick={handleUpdateBudget}
+                                className="update-budget-btn"
+                            >
+                                Update Budget
+                            </button>
+                        </label>
+                    </div>
+                    <div className="budget-info">
+                        <div className="total-expenses">
+                            Budget Left: ${((displayedBudget - totalExpenses) || 0).toFixed(2)}
+                        </div>
+                        <div className="total-expenses2">
+                            Total Spending: ${totalExpenses}
+                        </div>
+                        <div className="total-budget-display">
+                            Budget: ${displayedBudget.toFixed(2)}
+                        </div>
+                    </div>
                 </div>
-                <div className="budget-info">
-                    <div className="total-expenses">
-                        Budget Left: ${((displayedBudget - totalExpenses) || 0).toFixed(2)}
-                    </div>
-                    <div className="total-expenses2">
-                        Total Spending: ${totalExpenses}
-                    </div>
-                    <div className="total-budget-display">
-                        Budget: ${displayedBudget.toFixed(2)}
-                    </div>
-                </div>
+
             </form>
             <table>
                 <thead>
