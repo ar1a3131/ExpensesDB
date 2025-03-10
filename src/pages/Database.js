@@ -134,18 +134,25 @@ const Database = () => {
 
 
     useEffect(() => {
-        fetch(`${API_URL}/api/get-budget`)
-          .then(res => res.json())
-          .then(data => {
-              console.log("Budget fetched from API:", data); // Debugging line
-              if (Array.isArray(data) && data.length > 0) {
-                  setTotalBudget(parseFloat(data[0].total_budget)); // Ensure it's stored as a number
-              } else {
-                  setTotalBudget(0); // Default value if empty
-              }
-          })
-          .catch(err => console.error("Error fetching budget:", err));
+        fetch(`${API_URL}/api/department-budgets`)
+            .then(res => res.json())
+            .then(data => {
+                console.log("Fetched department budgets:", data);
+    
+                if (Array.isArray(data) && data.length > 0) {
+                    const formattedData = data.reduce((acc, { department, allowance }) => {
+                        acc[department] = parseFloat(allowance); // Ensure it's stored as a number
+                        return acc;
+                    }, {});
+    
+                    setDepartmentAllowances(formattedData);
+                } else {
+                    setDepartmentAllowances({});
+                }
+            })
+            .catch(err => console.error("Error fetching department budgets:", err));
     }, []);
+    
     
     
 
