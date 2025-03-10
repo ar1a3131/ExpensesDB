@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import DownloadCSV from './DownloadCSV';
+
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -130,6 +132,7 @@ const Inventory = () => {
                 >
                     Add New Item
                 </button>
+                <DownloadCSV rows={inventory} />
             </div>
             <table className="min-w-full bg-white border border-gray-300">
                 <thead>
@@ -144,7 +147,7 @@ const Inventory = () => {
                     {inventory.length > 0 ? (
                         inventory.map((item) => (
                             <tr key={item.item}>
-                                <td className="p-2 border">{item.last_update}</td>
+                                <td className="p-2 border">{new Date(item.last_update).toLocaleDateString('en-US', { timeZone: 'UTC' })}</td>
                                 <td className="p-2 border">{item.item}</td>
                                 <td className="p-2 border">{item.quantity}</td>
                                 <td className="p-2 border relative">

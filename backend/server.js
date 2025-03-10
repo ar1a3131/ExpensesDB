@@ -17,6 +17,8 @@ const PORT = process.env.DB_PORT;
 app.use(cors({ origin: '*' }));  // Allow all origins for testing purposes
 app.use(express.json()); // Enable JSON parsing for incoming requests
 
+
+
 // Connect to PostgreSQL
 const pool = new Pool({
     user: USER,
@@ -300,6 +302,91 @@ app.put('/api/update-quantity/:item', async (req, res) => {
 
 // ****************************************************************************************
 // ****************************************************************************************
+
+app.get('/api/get-budget', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT * FROM budget');
+        res.json(result.rows); // Make sure this returns JSON
+    } catch (err) {
+        console.error('Error fetching budget:', err);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
+// UPDATE Budget in database
+app.put('/api/update-budget', async (req, res) => {
+    try {
+        const { totalBudget } = req.body;
+        await pool.query('UPDATE budget SET total_budget = $1 WHERE id = (SELECT id FROM budget LIMIT 1)', [totalBudget]);
+        res.json({ message: "Budget updated successfully" });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: "Error updating budget" });
+    }
+});
+
+
+// ****************************************************************************************
+// ****************************************************************************************
+
+
+// ✅ GET All Department Budgets
+app.get('/api/department-budgets', async (req, res) => {
+    try {
+        const result = await pool.query('SELECT department, allowance FROM department_budgets ORDER BY department');
+        res.json(result.rows);
+    } catch (err) {
+        console.error("Error fetching department budgets:", err);
+        res.status(500).json({ error: "Error retrieving department budgets" });
+    }
+});
+
+// ✅ UPDATE Department Budget (Allowance)
+app.put('/api/update-department-budget', async (req, res) => {
+    const { department, allowance } = req.body;
+
+    try {
+        const result = await pool.query(
+            'UPDATE department_budgets SET allowance = $1 WHERE department = $2 RETURNING *',
+            [allowance, department]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Department not found" });
+        }
+
+        res.json({ message: "Department budget updated successfully", department, allowance });
+    } catch (err) {
+        console.error("Error updating department budget:", err);
+        res.status(500).json({ error: "Failed to update department budget" });
+    }
+});
+
+// ✅ DELETE Department
+app.delete('/api/delete-department/:department', async (req, res) => {
+    const department = decodeURIComponent(req.params.department);
+
+    try {
+        const result = await pool.query('DELETE FROM department_budgets WHERE department = $1 RETURNING *', [department]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Department not found" });
+        }
+
+        res.json({ message: `Department '${department}' deleted successfully` });
+    } catch (err) {
+        console.error("Error deleting department:", err);
+        res.status(500).json({ error: "Failed to delete department" });
+    }
+});
+
+
+
+
+// ****************************************************************************************
+// ****************************************************************************************
+
 
 // Start the server
 app.listen(port, '0.0.0.0', () => {

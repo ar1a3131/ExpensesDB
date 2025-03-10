@@ -1,6 +1,6 @@
 import React from 'react';
 
-const DownloadCSV = ({ rows, filename = "search_results.csv" }) => {
+const DownloadCSV = ({ rows, filename = "DBcsv.csv" }) => {
     const handleDownloadCSV = () => {
         if (!rows || rows.length === 0) {
             alert("No data to download.");

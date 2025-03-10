@@ -1,14 +1,17 @@
-/* Database.css */
+/* Database.css - Mobile Responsive - Adjusted Layout */
+
+/* General Table Styles */
 table {
-    width: 75%;
+    width: 95%;
     border-collapse: collapse;
-    margin: 20px auto; /* Center the table */
-    font-size: 14px;
+    margin: 20px auto;
+    font-size: 12px;
     text-align: left;
+    overflow-x: auto;
 }
 
 th, td {
-    padding: 12px 15px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
 }
 
@@ -25,19 +28,23 @@ tr:hover {
     background-color: #f1f1f1;
 }
 
-/* Style for the form and dropdowns */
+/* Form Container Styles - Top Left */
 .form-container {
-    align-items: center; /* Center align items */
-    justify-content: center;
     margin: 20px auto;
-    width: 100%;
-    max-width: 800px;
+    width: 80%;
+    max-width: 650px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+
 .form-container label, .form-container input, .form-container select {
-    margin: 0 10px;
-    padding: 8px;
+    margin: 3px 0;
+    padding: 6px;
     font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .form-container button {
@@ -48,197 +55,63 @@ tr:hover {
     border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
+    width: 100%;
+    margin-top: 8px;
 }
 
 .form-container button:hover {
     background-color: #ad9401;
 }
 
-/* Database.css */
-
-.form-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Center align items */
-    justify-content: center; /* Center the form vertically */
-    margin: 20px auto; /* Center the form horizontally */
-    width: 100%;
-    max-width: 800px;
-}
-
+/* Flex Container Styles */
 .flex-container {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 8px;
+    margin-bottom: 15px;
+    width: 100%;
 }
 
 .date-range-section {
-    display: flex;
-    gap: 10px;
     align-items: center;
-}
-
-.date-inputs label {
-    margin-right: 10px;
-}
-
-.date-inputs input {
-    padding: 5px;
-    margin-left: 5px;
-    width: 80px; /* Adjust width as needed */
-}
-
-button {
-    padding: 10px 20px;
-    font-size: 16px;
-    margin-top: 10px;
-    background-color: #c7aa04;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #ad9401;
-}
-
-.total-expenses {
-    position: absolute; /* Position it at the top-left */
-    top: 160px; /* Adjust vertical positioning */
-    right: 30px; /* Adjust horizontal positioning */
-    display: flex; /* Flexbox for alignment */
-    
-    align-items: center; /* Align items vertically */
-    padding: 5px 10px; /* Add padding */
-    font-size: 1rem;
-    background-color: #f8f9fa; /* Optional background for better visibility */
-    border: 1px solid #ccc; /* Optional border */
-    border-radius: 5px; /* Rounded corners */
-}
-
-.total-expenses2 {
-    position: absolute; /* Position it at the top-left */
-    top: 200px; /* Adjust vertical positioning */
-    right: 30px; /* Adjust horizontal positioning */
-    display: flex; /* Flexbox for alignment */
-    
-    align-items: center; /* Align items vertically */
-    padding: 5px 10px; /* Add padding */
-    font-size: 1rem;
-    background-color: #f8f9fa; /* Optional background for better visibility */
-    border: 1px solid #ccc; /* Optional border */
-    border-radius: 5px; /* Rounded corners */
-}
-
-.total-budget-display {
-    position: absolute;
-    top: 240px;  /* Positions it below total spending which is at 200px */
-    right: 30px;
-    display: flex;
-    align-items: center;
-    padding: 5px 10px;
-    font-size: 1rem;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.database-page {
-    margin-bottom: 120px;
-}
-
-h4 {
     text-align: center;
 }
 
-.total-budget {
-    position: absolute;
-    top: 100px;
-    margin-bottom: 10px;
-    right: 10px;
-    display: flex;
-    align-items: center;
-    padding: 5px 10px;
-    font-size: 1rem;
-    background-color: #f8f9fa;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.date-range-section input {
+    width: 80%;
+    box-sizing: border-box;
 }
 
-.update-budget-btn {
-    margin-left: 10px;
-    padding: 8px 16px;
-    background-color: #c7aa04;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    white-space: nowrap;  /* Prevents button text from wrapping */
+.date-range-section label {
+    width: auto;
+    min-width: 80px;
 }
 
-.budget-box {
-    margin-left: 10px;
-    margin-top: 100px;
-}
 
-.update-budget-btn:hover {
-    background-color: #ad9401;
-}
-
-.total-budget input {
-    margin: 0 10px;
-    padding: 5px;
-    width: 150px;  /* Adjust this value as needed */
-    font-size: 1rem;
-}
-
-.fiscal-year-table {
-    width: 75%;
-    margin: 20px auto;
-    border-collapse: collapse;
-    font-size: 14px;
-    text-align: left;
-}
-
-.fiscal-year-table th, .fiscal-year-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-}
-
-.fiscal-year-table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-}
-
-.fiscal-year-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-}
-
-.fiscal-year-table tr:hover {
-    background-color: #f1f1f1;
+.separator {
+    border-top: 1px solid #ddd;
+    margin: 10px 0;
+    width: 100%;
 }
 
 .quarter-filter {
-    margin-top: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 5px;
     width: 100%;
 }
 
 .year-select {
-    margin-left: 10px;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 6px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .quarters-container {
     display: flex;
-    gap: 20px;
+    flex-wrap: nowrap; /* Prevent wrapping to next line */
+    justify-content: center; /* Center align */
+    gap: 15px; /* Adjust spacing */
     margin-top: 10px;
 }
 
@@ -246,38 +119,95 @@ h4 {
     display: flex;
     align-items: center;
     gap: 5px;
+    flex: 0 1 auto; /* Allow shrink/grow for spacing */
+    white-space: nowrap; /* Prevent line breaks */
 }
 
-.quarter-checkbox input[type="checkbox"] {
-    margin-right: 5px;
+/* Move Budget Box Lower */
+.budget-box {
+    position: absolute;
+    top: 80px; /* Move it lower */
+    right: 10px;
+    width: 90%;
+    max-width: 300px;
 }
 
-.separator {
-    border-top: 1px solid #ddd;
-    margin: 20px 0;
-    width: 100%;
-}
-
-/* ------------- */
-
-.info_box {
+.total-budget {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    position: absolute;
-    bottom: 500px;
-    right: 10px;
-    padding: 10px;
-    border: 1px solid black;
+    padding: 8px;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
     border-radius: 5px;
-    background-color: #ffffff;
-    width: 250px;
-    font-family: 'Helvetica', sans-serif;
+    margin-bottom: 8px;
+    width: 100%;
 }
 
-.info {
-    font-size: 18px;
-    font-weight: 300;
-    margin: 0 0 10px 0; /* Add margin at the bottom */
-    color: black;
+.total-budget input {
+    margin: 3px 0;
+    padding: 6px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.update-budget-btn {
+    width: 100%;
+}
+
+.budget-info {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.total-expenses, .total-expenses2, .total-budget-display {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+}
+
+/* right side table - department budgets */
+/* Wrap search form and budget charts in a flex container */
+.search-and-budget-container {
+    display: flex;
+    flex-wrap: wrap; /* Ensures responsive behavior */
+    justify-content: space-between; /* Space out items */
+    gap: 20px;
+    align-items: flex-start;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Adjust department budgets chart layout */
+.department-budgets-chart {
+    position: relative; /* Removes absolute positioning */
+    width: 48%; /* Adjusted for better spacing */
+    max-width: 650px;
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    box-sizing: border-box;
+    margin-left: -50px; /* Move it slightly to the left */
+}
+
+/* Budget box adjustments */
+.budget-box {
+    position: relative; /* Ensures normal document flow */
+    width: 48%; /* Adjust width to match department chart */
+    max-width: 300px;
+}
+
+/* Ensure form takes full width when necessary */
+.form-container {
+    flex: 1;
+    min-width: 300px; /* Ensures it doesn't shrink too much */
 }
