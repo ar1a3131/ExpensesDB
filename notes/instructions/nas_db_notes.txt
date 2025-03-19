@@ -11,6 +11,11 @@ Source code for the full stack code is in Helpdesk@F1-NAS2
 
 
 
+_________________________________________
+| Made MaintenanceBudget dir and 	|
+| ExpensesDB dir in volume1 dir		|
+__________________________________________
+
 ____________________________________________________________
 *********************************
 Access the PostgreSQL container from cmd: 
@@ -19,8 +24,8 @@ sudo docker exec -it postgres-container /bin/bash
 password: 
 Fiction6-Wincing-Germproof
 
-To enter database from PostgreSQL container: 
-psql -U postgres -d expensesdb
+To enter psql interactive terminal: 
+psql -U postgres
 
 I used this once, just documenting it (if the above doesn't work, try this one):
 root@58e26579e65f:/app# 
