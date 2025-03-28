@@ -211,3 +211,17 @@ tr:hover {
     flex: 1;
     min-width: 300px; /* Ensures it doesn't shrink too much */
 }
+
+/* **************************** */
+.budget-info .total-budget-display:last-child {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+    color: #000000; /* Dark blue text */
+    font-weight: bold; /* Make the text bold */
+    margin-top: 10px; /* Add some space above the box */
+}
+
+/* Optional: Add a subtle hover effect if desired */
+.budget-info .total-budget-display:last-child:hover {
+    background-color: #d1d1d1; /* Slightly darker blue on hover */
+}

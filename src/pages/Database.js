@@ -307,6 +307,10 @@ const Database = () => {
         const total = filteredData.reduce((sum, row) => sum + parseFloat(row.amount || 0), 0);
         setTotalExpenses(total.toFixed(2)); // Format to 2 decimal places
     };
+
+    const calculateTotalDepartmentAllowances = (data) => {
+        return Object.values(departmentAllowances).reduce((sum, allowance) => sum + allowance, 0);
+    }
     
 
     // Handle checkbox change for recurring expense
@@ -562,6 +566,13 @@ const Database = () => {
                 </div>
                 <div className="total-budget-display">
                     Budget: ${displayedBudget.toFixed(2)}
+                </div>
+                <br/>
+                <br/>
+                <div className="total-budget-display">
+                    Budget (minus department allowances): ${
+                        (displayedBudget - calculateTotalDepartmentAllowances()).toFixed(2)
+                    }
                 </div>
             </div>
         </div>

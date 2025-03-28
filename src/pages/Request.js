@@ -200,10 +200,10 @@ const Request = () => {
                 </label>
                 <br />
                 <br />
-                <InventoryOptions
+                {/* <InventoryOptions
                     inventoryItems={inventory}
                     onAddToInventory={handleAddToInventory}
-                />
+                /> */}
                 <br />
                 <br />
                 <button type="submit">Submit</button>
